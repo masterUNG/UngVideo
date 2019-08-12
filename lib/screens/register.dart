@@ -8,12 +8,22 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Explicit
   Color textColor = Colors.blueGrey.shade700;
+  final formKey = GlobalKey<FormState>();
+  String name, email, password;
 
   // Method
   Widget registerButton() {
     return IconButton(
       icon: Icon(Icons.cloud_upload),
-      onPressed: () {},
+      onPressed: () {
+        print('Register Clicked');
+
+        if (formKey.currentState.validate()) {
+          formKey.currentState.save();
+          print('name = $name, email = $email, pass = $password');
+        }
+
+      },
     );
   }
 
@@ -32,7 +42,14 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Name in English',
         helperStyle: TextStyle(color: Colors.purple),
         hintText: 'FirstName SecondName',
-      ),
+      ),validator: (String value){
+        value = value.trim();
+        if (value.isEmpty) {
+          return 'Please Fill Name in Blank';
+        }
+      },onSaved: (String value){
+        name = value;
+      },
     );
   }
 
@@ -52,7 +69,13 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Email Format',
         helperStyle: TextStyle(color: Colors.green),
         hintText: 'you@abc.com',
-      ),
+      ),validator: (String value){
+        if (!((value.contains('@')) && (value.contains('.')))) {
+          return 'Please Type Email Format';
+        }
+      },onSaved: (String value){
+        email = value;
+      },
     );
   }
 
@@ -60,18 +83,24 @@ class _RegisterState extends State<Register> {
     return TextFormField(
       decoration: InputDecoration(
         enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
         icon: Icon(
           Icons.lock,
           size: 36.0,
-          color: Colors.orange,
+          color: Colors.yellow,
         ),
         labelText: 'Password:',
-        labelStyle: TextStyle(color: Colors.orange),
+        labelStyle: TextStyle(color: Colors.yellow),
         helperText: 'Type Your Password',
-        helperStyle: TextStyle(color: Colors.orange),
+        helperStyle: TextStyle(color: Colors.yellow),
         hintText: 'More 6 Charactor',
-      ),
+      ),validator: (String value){
+        if (value.length < 6) {
+          return 'Please Type Pass More 6 Charactor';
+        }
+      },onSaved: (String value){
+        password = value;
+      },
     );
   }
 
@@ -87,16 +116,20 @@ class _RegisterState extends State<Register> {
         child: Container(
           decoration: BoxDecoration(
             gradient: RadialGradient(
-              colors: [Colors.white, Colors.blueGrey],radius: 1.5,center: Alignment.topCenter
-            ),
+                colors: [Colors.white, Colors.blueGrey],
+                radius: 1.7,
+                center: Alignment.topCenter),
           ),
-          child: ListView(
-            padding: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-            children: <Widget>[
-              nameText(),
-              emailText(),
-              passwordText(),
-            ],
+          child: Form(
+            key: formKey,
+            child: ListView(
+              padding: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+              children: <Widget>[
+                nameText(),
+                emailText(),
+                passwordText(),
+              ],
+            ),
           ),
         ),
       ),
