@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "632559126474",
+    "firebase_url": "https://ungvideo-19941.firebaseio.com",
+    "project_id": "ungvideo-19941",
+    "storage_bucket": "ungvideo-19941.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632559126474:android:f2b34f374cd2d9c2",
+        "android_client_info": {
+          "package_name": "th.in.androidthai.ung_video"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632559126474-t44s5unv6l8hf51snl8oafvcopum1qgo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5SrjibQIX4mBm3Z2SeKk9jtdCt2sApCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632559126474-t44s5unv6l8hf51snl8oafvcopum1qgo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

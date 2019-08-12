@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ung_video/screens/my_service.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -10,6 +12,7 @@ class _RegisterState extends State<Register> {
   Color textColor = Colors.blueGrey.shade700;
   final formKey = GlobalKey<FormState>();
   String name, email, password;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   // Method
   Widget registerButton() {
@@ -21,10 +24,37 @@ class _RegisterState extends State<Register> {
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
           print('name = $name, email = $email, pass = $password');
+          registerThread();
         }
-
       },
     );
+  }
+
+  Future<void> registerThread() async {
+    
+    await firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((response) {
+          print('Welcome To Firebase');
+          setupDisplayName();
+        })
+        .catchError((response) {
+          print('response = ${response.toString()}');
+        });
+  }
+
+  Future<void> setupDisplayName()async{
+
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = name;
+    firebaseUser.updateProfile(userUpdateInfo);
+
+    // Create Thread Without Arrow Back
+    MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => MyService());
+    Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+
+
   }
 
   Widget nameText() {
@@ -42,12 +72,14 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Name in English',
         helperStyle: TextStyle(color: Colors.purple),
         hintText: 'FirstName SecondName',
-      ),validator: (String value){
+      ),
+      validator: (String value) {
         value = value.trim();
         if (value.isEmpty) {
           return 'Please Fill Name in Blank';
         }
-      },onSaved: (String value){
+      },
+      onSaved: (String value) {
         name = value;
       },
     );
@@ -69,11 +101,13 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Email Format',
         helperStyle: TextStyle(color: Colors.green),
         hintText: 'you@abc.com',
-      ),validator: (String value){
+      ),
+      validator: (String value) {
         if (!((value.contains('@')) && (value.contains('.')))) {
           return 'Please Type Email Format';
         }
-      },onSaved: (String value){
+      },
+      onSaved: (String value) {
         email = value;
       },
     );
@@ -94,11 +128,13 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Your Password',
         helperStyle: TextStyle(color: Colors.yellow),
         hintText: 'More 6 Charactor',
-      ),validator: (String value){
+      ),
+      validator: (String value) {
         if (value.length < 6) {
           return 'Please Type Pass More 6 Charactor';
         }
-      },onSaved: (String value){
+      },
+      onSaved: (String value) {
         password = value;
       },
     );
