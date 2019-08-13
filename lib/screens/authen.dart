@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ung_video/screens/my_service.dart';
 
 class Authen extends StatefulWidget {
   @override
@@ -7,11 +9,16 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   // Explicit
+  final formKey = GlobalKey<FormState>();
+  String emailString, passwordString;
 
   // Method
 
   Widget emailText() {
     return TextFormField(
+      onSaved: (String value) {
+        emailString = value;
+      },
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: 'Email :',
@@ -22,6 +29,9 @@ class _AuthenState extends State<Authen> {
 
   Widget passwordText() {
     return TextFormField(
+      onSaved: (String value) {
+        passwordString = value;
+      },
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Password :',
@@ -40,13 +50,16 @@ class _AuthenState extends State<Authen> {
         ),
         padding: EdgeInsets.all(20.0),
         width: MediaQuery.of(context).size.width * 0.7,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            emailText(),
-            passwordText(),
-          ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              emailText(),
+              passwordText(),
+            ],
+          ),
         ),
       ),
     );
@@ -79,6 +92,45 @@ class _AuthenState extends State<Authen> {
     );
   }
 
+  Future<void> checkAuthen() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .signInWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      myAlert(title, message);
+    });
+  }
+
+  Widget okButton() {
+    return FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  void myAlert(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[okButton()],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +155,11 @@ class _AuthenState extends State<Authen> {
           color: Colors.grey,
           size: 36.0,
         ),
-        onPressed: () {},
+        onPressed: () {
+          formKey.currentState.save();
+          print('email = $emailString, pasword = $passwordString');
+          checkAuthen();
+        },
       ),
     );
   }
