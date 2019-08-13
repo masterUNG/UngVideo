@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ung_video/screens/home.dart';
+import 'package:ung_video/screens/imformation.dart';
+import 'package:ung_video/screens/video_listview.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class _MyServiceState extends State<MyService> {
   Color textColor = Colors.blueGrey.shade800;
   String nameLogin = '';
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  Widget myWidget = VideoListView();
 
   // Method
   @override
@@ -81,17 +84,55 @@ class _MyServiceState extends State<MyService> {
         Icons.import_export,
         size: 36.0,
       ),
-      title: Text('Sign Out'),onTap: (){
+      title: Text('Sign Out'),
+      onTap: () {
         signOutProcess();
         Navigator.of(context).pop();
       },
     );
   }
 
-  Future<void> signOutProcess()async{
-    await firebaseAuth.signOut().then((response){
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Home());
-      Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+  Widget videoListMenu() {
+    return ListTile(
+      leading: Icon(
+        Icons.video_call,
+        size: 36.9,
+      ),
+      title: Text('Video ListView'),
+      onTap: () {
+        setState(() {
+          myWidget = VideoListView();
+          Navigator.of(context).pop();
+        });
+      },
+    );
+  }
+
+  Widget infomationMenu() {
+    return ListTile(
+      leading: Icon(
+        Icons.info,
+        size: 36.9,
+      ),
+      title: Text('Information'),onTap: (){
+        setState(() {
+          myWidget = Informarion();
+          Navigator.of(context).pop();
+        });
+      },
+    );
+  }
+
+  Widget myDivider() {
+    return Divider();
+  }
+
+  Future<void> signOutProcess() async {
+    await firebaseAuth.signOut().then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => Home());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
     });
   }
 
@@ -100,7 +141,12 @@ class _MyServiceState extends State<MyService> {
       child: ListView(
         children: <Widget>[
           myDrawerHead(),
+          videoListMenu(),
+          myDivider(),
+          infomationMenu(),
+          myDivider(),
           signOutMenu(),
+          myDivider(),
         ],
       ),
     );
@@ -112,7 +158,7 @@ class _MyServiceState extends State<MyService> {
       appBar: AppBar(
         title: Text('My Service'),
       ),
-      body: Text('Body'),
+      body: myWidget,
       drawer: myDrawerMenu(),
     );
   }
