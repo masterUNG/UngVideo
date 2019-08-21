@@ -31,30 +31,27 @@ class _RegisterState extends State<Register> {
   }
 
   Future<void> registerThread() async {
-    
     await firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((response) {
-          print('Welcome To Firebase');
-          setupDisplayName();
-        })
-        .catchError((response) {
-          print('response = ${response.toString()}');
-        });
+      print('Welcome To Firebase');
+      setupDisplayName();
+    }).catchError((response) {
+      print('response = ${response.toString()}');
+    });
   }
 
-  Future<void> setupDisplayName()async{
-
+  Future<void> setupDisplayName() async {
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     UserUpdateInfo userUpdateInfo = UserUpdateInfo();
     userUpdateInfo.displayName = name;
     firebaseUser.updateProfile(userUpdateInfo);
 
     // Create Thread Without Arrow Back
-    MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => MyService());
-    Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
-
-
+    MaterialPageRoute materialPageRoute =
+        MaterialPageRoute(builder: (BuildContext context) => MyService());
+    Navigator.of(context)
+        .pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
   }
 
   Widget nameText() {
@@ -140,35 +137,58 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget mainWidget() {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        actions: <Widget>[registerButton()],
-        backgroundColor: textColor,
-        title: Text('Register'),
-      ),
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-                colors: [Colors.white, Colors.blueGrey],
-                radius: 1.7,
-                center: Alignment.topCenter),
+        leading: IconButton(
+          icon: Icon(
+            Icons.navigate_before,
+            size: 36.0,
+            color: Colors.blue,
           ),
-          child: Form(
-            key: formKey,
-            child: ListView(
-              padding: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
-              children: <Widget>[
-                nameText(),
-                emailText(),
-                passwordText(),
-              ],
-            ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        actions: <Widget>[registerButton()],
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'Register',
+          style: TextStyle(color: Colors.blue),
+        ),
+        elevation: 0,
+      ),
+      body: Container(
+        child: Form(
+          key: formKey,
+          child: ListView(
+            padding: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+            children: <Widget>[
+              nameText(),
+              emailText(),
+              passwordText(),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/wallpaper2.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        mainWidget(),
+      ],
     );
   }
 }
